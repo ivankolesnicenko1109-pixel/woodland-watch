@@ -209,7 +209,7 @@
       <circle cx="60" cy="60" r="3" fill="#e9e4d2"/>
     </svg>
     <div class="ld-word">Woodland</div>
-    <div class="ld-pct" id="pct">000 / 277</div>
+    <div class="ld-pct" id="pct">000 %</div>
   </div>
 
   <nav>
@@ -318,11 +318,11 @@
   <section class="block" style="padding-top:0">
     <div class="wrap">
       <div class="trio">
-        <article class="card reveal"><img src="frames/f_0080.jpg" alt="Керамический корпус проступает из облака пигмента" loading="lazy">
+        <article class="card reveal"><img src="frames/f_0165.jpg" alt="Керамический корпус проступает из облака пигмента" loading="lazy">
           <div class="txt"><span class="n">01 — Материал</span><h3>Керамика</h3><p>Цвет не нанесён сверху — он и есть материал.</p></div></article>
-        <article class="card reveal" style="transition-delay:.12s"><img src="frames/f_0100.jpg" alt="Детали хронографического механизма в разлёте" loading="lazy">
+        <article class="card reveal" style="transition-delay:.12s"><img src="frames/f_0207.jpg" alt="Детали хронографического механизма в разлёте" loading="lazy">
           <div class="txt"><span class="n">02 — Механика</span><h3>Калибр</h3><p>Сотни деталей, которые находят своё место за секунды.</p></div></article>
-        <article class="card reveal" style="transition-delay:.24s"><img src="frames/f_0210.jpg" alt="Текстильный ремешок, сплетённый из нитей" loading="lazy">
+        <article class="card reveal" style="transition-delay:.24s"><img src="frames/f_0436.jpg" alt="Текстильный ремешок, сплетённый из нитей" loading="lazy">
           <div class="txt"><span class="n">03 — Текстиль</span><h3>Ремешок</h3><p>Плетение, вдохновлённое лётными стропами.</p></div></article>
       </div>
     </div>
@@ -336,7 +336,7 @@
       <p>Пигмент, огонь, сталь и нить. Один ролик, превращённый в историю, которую читатель листает сам, — со скоростью собственного пальца.</p>
       <a href="#stage" class="btn" id="replay">Собрать заново <span class="arw">↺</span></a>
     </div>
-    <div class="shot reveal" style="transition-delay:.15s"><img src="frames/f_0277.jpg" alt="Готовый пилотский хронограф в зелёной керамике" loading="lazy"></div>
+    <div class="shot reveal" style="transition-delay:.15s"><img src="frames/f_0575.jpg" alt="Готовый пилотский хронограф в зелёной керамике" loading="lazy"></div>
   </section>
 
   <footer>
@@ -346,8 +346,11 @@
 
 <script>
 (function(){
-  const N = 277;                       // кадров в последовательности
-  const FPS_SRC = 1/0.13;              // шаг нарезки — 0.13 с
+  const N = 575;                       // кадров в последовательности
+  const FPS_SRC = 16;                  // шаг нарезки — 0.0625 с
+  const SCROLL_LEN = 9000;             // длина скролл-сцены, px
+  const MAX_SPEED = 1/16;              // сцена целиком — не быстрее чем за 16 с
+  const KEY = 4;                       // сначала грузим каждый 4-й кадр, остальное — фоном
   const pad = n => String(n).padStart(4,'0');
   const src = i => `frames/f_${pad(i)}.jpg`;
   const ROMAN = ['I','II','III','IV','V','VI','VII'];
@@ -382,27 +385,35 @@
     canvas.width = Math.round(W*DPR); canvas.height = Math.round(H*DPR);
     ctx.setTransform(DPR,0,0,DPR,0,0);
     ctx.imageSmoothingQuality = 'high';
-    stage.style.height = Math.round(N*30 + window.innerHeight) + 'px';
-    lastIdx = -1; draw(current);
+    stage.style.height = Math.round(SCROLL_LEN + window.innerHeight) + 'px';
+    lastIdx = -1; lastPos = -1; draw(current);
   }
 
   // Ролик вертикальный (4:5). На узком экране — обычный cover на весь фон.
   // На широком растягивать нельзя (кроп и мыло), поэтому кадр встаёт на всю высоту
   // правее центра, а его боковые края растворяются в размытой копии (#ambient).
-  function drawFrame(img, w, h){
-    if(!img || !img.complete || !img.naturalWidth) return false;
+  // Между соседними кадрами — кроссфейд по дробной части позиции,
+  // поэтому даже медленный скролл не «щёлкает» кадрами.
+  function drawFrame(img, next, mix, w, h){
     const ir = img.naturalWidth/img.naturalHeight, cr = w/h;
+    const blend = () => {
+      if(next && next !== img && mix > 0.02){
+        ctx.globalAlpha = mix; ctx.drawImage(next,dx,dy,dw,dh); ctx.globalAlpha = 1;
+      }
+    };
+    let dw,dh,dx,dy;
     ctx.clearRect(0,0,w,h);
     if(cr <= ir*1.25){
-      let dw,dh,dx,dy;
       if(ir>cr){ dh=h; dw=h*ir; dx=(w-dw)/2; dy=0; }
       else { dw=w; dh=w/ir; dx=0; dy=(h-dh)/2; }
       ctx.drawImage(img,dx,dy,dw,dh);
-      return true;
+      blend();
+      return;
     }
-    const dh = h*1.04, dw = dh*ir, dy = (h-dh)/2;
-    const dx = Math.min(w-dw*0.92, w*0.62 - dw/2);
+    dh = h*1.04; dw = dh*ir; dy = (h-dh)/2;
+    dx = Math.min(w-dw*0.92, w*0.62 - dw/2);
     ctx.drawImage(img,dx,dy,dw,dh);
+    blend();
     ctx.globalCompositeOperation = 'destination-in';
     const g = ctx.createLinearGradient(dx,0,dx+dw,0);
     g.addColorStop(0,'rgba(0,0,0,0)');
@@ -412,30 +423,59 @@
     ctx.fillStyle = g;
     ctx.fillRect(0,0,w,h);
     ctx.globalCompositeOperation = 'source-over';
-    return true;
   }
 
-  // --- предзагрузка ---
+  // --- предзагрузка: ключевые кадры (каждый KEY-й) держат лоадер, остальные догружаются фоном ---
   const imgs = new Array(N);
-  let loaded = 0, ready = false;
+  const ok = new Uint8Array(N);
+  const keyTotal = Math.ceil(N/KEY);
+  let keyLoaded = 0, ready = false;
   const ldHand = $('ldHand'), pct = $('pct');
+  function load(i, isKey, done){
+    const im = new Image();
+    im.decoding = 'async';
+    im.onload = () => { ok[i] = 1; done && done(); };
+    im.onerror = () => { done && done(); };
+    im.src = src(i+1);
+    imgs[i] = im;
+  }
   function loadAll(){
-    for(let i=1;i<=N;i++){
-      const im = new Image();
-      im.decoding = 'async';
-      im.onload = im.onerror = () => {
-        loaded++;
-        ldHand.style.transform = `rotate(${loaded/N*360}deg)`;
-        pct.textContent = String(loaded).padStart(3,'0') + ' / ' + N;
-        if(loaded===N) setTimeout(start, 250);
-      };
-      im.src = src(i);
-      imgs[i-1] = im;
+    const rest = [];
+    for(let i=0;i<N;i++){
+      if(i%KEY===0 || i===N-1){
+        load(i, true, () => {
+          keyLoaded++;
+          const p = Math.min(1, keyLoaded/keyTotal);
+          ldHand.style.transform = `rotate(${p*360}deg)`;
+          pct.textContent = String(Math.round(p*100)).padStart(3,'0') + ' %';
+          if(keyLoaded >= keyTotal){ setTimeout(start, 200); loadRest(rest); }
+        });
+      } else rest.push(i);
     }
   }
+  // промежуточные кадры — порциями, чтобы не забивать сеть
+  function loadRest(list){
+    let k = 0, active = 0;
+    const pump = () => {
+      while(active < 8 && k < list.length){
+        active++;
+        load(list[k++], false, () => { active--; pump(); });
+      }
+    };
+    pump();
+  }
+  // ближайший уже загруженный кадр (пока догружаются промежуточные)
+  function frameAt(i){
+    if(ok[i]) return imgs[i];
+    for(let d=1; d<KEY; d++){
+      if(i-d>=0 && ok[i-d]) return imgs[i-d];
+      if(i+d<N && ok[i+d]) return imgs[i+d];
+    }
+    return null;
+  }
 
-  // --- скролл с инерцией ---
-  let target = 0, current = 0;
+  // --- скролл: анимация догоняет скролл с ограниченной скоростью ---
+  let target = 0, current = 0, vel = 0, lastT = 0;
   function readScroll(){
     const total = stage.offsetHeight - window.innerHeight;
     target = Math.max(0, Math.min(1, total>0 ? -stage.getBoundingClientRect().top/total : 0));
@@ -494,17 +534,24 @@
     }
   }
 
-  let lastIdx = -1, ambTick = 0;
+  let lastPos = -1, lastIdx = -1;
   function draw(p){
-    const idx = Math.max(0, Math.min(N-1, Math.round(p*(N-1))));
-    if(idx !== lastIdx){
-      if(drawFrame(imgs[idx], W, H)){
-        lastIdx = idx;
-        actx.drawImage(imgs[idx], 0, 0, 32, 40);
+    const pos = Math.max(0, Math.min(N-1, p*(N-1)));
+    const key = Math.round(pos*32)/32;          // перерисовываем только при заметном сдвиге
+    if(key !== lastPos){
+      const i = Math.floor(pos), mix = pos - i;
+      const a = frameAt(i), b = frameAt(Math.min(N-1, i+1));
+      if(a){
+        drawFrame(a, b, mix, W, H);
+        lastPos = key;
+        if(i !== lastIdx){
+          lastIdx = i;
+          actx.drawImage(a, 0, 0, 32, 40);
+          const secs = i/FPS_SRC, f = Math.floor((secs%1)*24);
+          tc.textContent = `00:${String(Math.floor(secs)).padStart(2,'0')}:${String(f).padStart(2,'0')}`;
+          fr.textContent = String(i+1).padStart(3,'0');
+        }
       }
-      const secs = idx/FPS_SRC, f = Math.floor((secs%1)*24);
-      tc.textContent = `00:${String(Math.floor(secs)).padStart(2,'0')}:${String(f).padStart(2,'0')}`;
-      fr.textContent = String(idx+1).padStart(3,'0');
     }
     updateCaps(p);
 
@@ -518,9 +565,19 @@
     if(!reduce) showcase.style.transform = `scale(${(1 + p*0.05).toFixed(4)})`;
   }
 
-  function tick(){
-    current += (target - current) * (reduce ? 1 : 0.1);
-    if(Math.abs(target-current) < 0.00015) current = target;
+  // Критически демпфированное догоняние с потолком скорости:
+  // слабый и сильный скролл дают один и тот же ровный темп, без рывков и перелётов.
+  function tick(now){
+    const dt = lastT ? Math.min(0.1, (now - lastT)/1000) : 1/60;
+    lastT = now;
+    if(reduce){ current = target; vel = 0; }
+    else {
+      const diff = target - current;
+      const want = Math.max(-MAX_SPEED, Math.min(MAX_SPEED, diff*2.2));
+      vel += (want - vel) * Math.min(1, dt*9);
+      current += vel*dt;
+      if(Math.abs(diff) < 0.00004 && Math.abs(vel) < 0.0004){ current = target; vel = 0; }
+    }
     draw(current);
     requestAnimationFrame(tick);
   }

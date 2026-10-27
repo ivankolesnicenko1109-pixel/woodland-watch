@@ -1,14 +1,18 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="fr">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>IWC Woodland — концепт</title>
-<meta name="description" content="Концепт-лендинг IWC Pilot's Watch Chronograph TOP GUN «Woodland»: часы собираются из пигмента, керамики и нитей по мере прокрутки." />
+<title>IWC Woodland — concept</title>
+<meta name="description" content="Concept de landing page pour l'IWC Pilot's Watch Chronograph TOP GUN « Woodland » : la montre s'assemble à partir du pigment, de la céramique et des fils au fil du défilement." />
 <meta name="theme-color" content="#070a08" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="IWC Woodland — часы, которые собираются при прокрутке" />
-<meta property="og:description" content="Концепт-лендинг: пилотский хронограф в зелёной керамике собирается из пигмента, механизма и нитей." />
+<meta property="og:locale" content="fr_FR" />
+<meta property="og:title" content="IWC Woodland — la montre qui s'assemble au défilement" />
+<meta property="og:description" content="Concept : un chronographe d'aviateur en céramique verte naît du pigment, du mouvement et des fils." />
+<link rel="alternate" hreflang="fr" href="https://woodland-watch.vercel.app/" />
+<link rel="alternate" hreflang="de" href="https://woodland-watch.vercel.app/?lang=de" />
+<link rel="alternate" hreflang="ru" href="https://woodland-watch.vercel.app/?lang=ru" />
 <meta property="og:image" content="https://woodland-watch.vercel.app/frames/f_0431.jpg" />
 <meta property="og:url" content="https://woodland-watch.vercel.app/" />
 <meta name="twitter:card" content="summary_large_image" />
@@ -58,6 +62,11 @@
   .links a:hover{color:#fff}
   .links .cta{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);padding:10px 18px;border:1px solid rgba(233,228,210,.35);border-radius:999px;transition:background .3s,border-color .3s}
   .links .cta:hover{background:rgba(233,228,210,.1);border-color:var(--lume)}
+  .lang{display:flex;border:1px solid var(--line);border-radius:999px;padding:3px}
+  .lang button{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);background:none;border:0;
+    padding:6px 9px;border-radius:999px;cursor:pointer;transition:color .3s,background .3s}
+  .lang button:hover{color:var(--ink)}
+  .lang button[aria-pressed="true"]{color:#0b100d;background:var(--lume)}
 
   /* ---------- Scroll stage ---------- */
   .stage{position:relative;width:100%}
@@ -167,7 +176,9 @@
     nav{padding:14px 16px}
     .logo b{font-size:18px}
     .logo span{font-size:17px}
-    .links .cta{padding:8px 14px;font-size:11px}
+    .links{gap:8px}
+    .links .cta{padding:8px 11px;font-size:11px;letter-spacing:.08em;white-space:nowrap}
+    .lang button{padding:5px 7px}
     .spec .v{font-size:40px}
     .btn{padding:16px 22px}
   }
@@ -181,67 +192,72 @@
   <div id="load"></div>
 
   <nav id="nav">
-    <a href="#top" class="logo" aria-label="IWC Woodland — в начало"><b>IWC</b><span>Woodland</span></a>
+    <a href="#top" class="logo" data-i-aria="nav.home" aria-label="IWC Woodland — retour en haut"><b>IWC</b><span>Woodland</span></a>
     <div class="links">
-      <span class="tag">Концепт</span>
-      <a href="#stage">История</a>
-      <a href="#specs">Характеристики</a>
+      <span class="tag" data-i="tag">Concept</span>
+      <a href="#stage" data-i="nav.story">L'histoire</a>
+      <a href="#specs" data-i="nav.specs">Caractéristiques</a>
+      <div class="lang" role="group" aria-label="Langue / Sprache / Язык">
+        <button type="button" data-lang="fr" lang="fr">FR</button>
+        <button type="button" data-lang="de" lang="de">DE</button>
+        <button type="button" data-lang="ru" lang="ru">RU</button>
+      </div>
       <a href="https://www.iwc.com/" class="cta" target="_blank" rel="noopener">iwc.com ↗</a>
     </div>
   </nav>
 
   <!-- Scroll stage -->
   <section class="stage" id="stage" aria-labelledby="stage-title">
-    <p class="sr" id="stage-title">Анимация: хронограф IWC Woodland собирается при прокрутке — из пигмента формируется керамический корпус, механизм собирается слой за слоем, сплетается текстильный ремешок, и в финале появляются готовые часы.</p>
+    <p class="sr" id="stage-title" data-i="sr">Animation : le chronographe IWC Woodland s'assemble au fil du défilement — le boîtier en céramique naît du pigment, le mouvement se monte couche après couche, le bracelet textile se tisse, puis la montre apparaît, achevée.</p>
     <div class="viewport">
       <canvas id="ambient" width="32" height="40" aria-hidden="true"></canvas>
       <div class="showcase" id="showcase" aria-hidden="true"><canvas id="scene"></canvas></div>
       <div class="tint"></div>
       <div class="vignette"></div>
-      <div class="sc-meta" aria-hidden="true"><span id="tc">00:00:00</span><span>Кадр <span id="fr">001</span></span></div>
+      <div class="sc-meta" aria-hidden="true"><span id="tc">00:00:00</span><span><span data-i="frame">Image</span> <span id="fr">001</span></span></div>
 
       <div class="caps" id="caps">
         <div class="cap" data-seg="-1,-0.5,0.035,0.065" data-num="I">
           <div class="eyebrow"><b>I</b> IWC · Pilot's Chronograph</div>
           <h1><span class="ln"><span>Wood</span></span><span class="ln"><span><em>land</em></span></span></h1>
-          <p>Оттенок лесной хвои, созданный вместе с Pantone. Листайте — и часы соберутся на ваших глазах.</p>
+          <p data-i="c1.p">Un vert forêt, créé avec Pantone. Faites défiler — la montre s'assemble sous vos yeux.</p>
         </div>
 
         <div class="cap" data-seg="0.07,0.09,0.12,0.14" data-num="II">
-          <div class="eyebrow"><b>II</b> Пигмент</div>
-          <h2><span class="ln"><span>Сначала —</span></span><span class="ln"><span><em>горсть пыли</em></span></span></h2>
-          <p>Керамика начинается с порошка: оксид циркония и пигмент цвета Woodland.</p>
+          <div class="eyebrow"><b>II</b> <span data-i="c2.eb">Pigment</span></div>
+          <h2><span class="ln"><span data-i="c2.l1">D'abord —</span></span><span class="ln"><span data-i="c2.l2"><em>une poignée de poussière</em></span></span></h2>
+          <p data-i="c2.p">La céramique commence par une poudre : oxyde de zirconium et pigment couleur Woodland.</p>
         </div>
 
         <div class="cap" data-seg="0.15,0.18,0.32,0.34" data-num="III">
-          <div class="eyebrow"><b>III</b> Корпус</div>
-          <h2><span class="ln"><span>Форма</span></span><span class="ln"><span><em>из облака</em></span></span></h2>
-          <p>Из пигментной пыли проступает корпус. Цвет здесь не покрытие, а сам материал — керамика не выгорает и почти не царапается.</p>
+          <div class="eyebrow"><b>III</b> <span data-i="c3.eb">Boîtier</span></div>
+          <h2><span class="ln"><span data-i="c3.l1">Une forme</span></span><span class="ln"><span data-i="c3.l2"><em>née d'un nuage</em></span></span></h2>
+          <p data-i="c3.p">Le boîtier émerge de la poussière de pigment. La couleur n'est pas un revêtement, c'est la matière elle-même : la céramique ne pâlit pas et ne se raye presque pas.</p>
         </div>
 
         <div class="cap" data-seg="0.35,0.38,0.52,0.55" data-num="IV">
-          <div class="eyebrow"><b>IV</b> Механизм</div>
-          <h2><span class="ln"><span>Сердце</span></span><span class="ln"><span><em>в разрезе</em></span></span></h2>
-          <p>Хронографический калибр IWC собирается слой за слоем — мосты, колёса, рубины. Сверху его закрывает титановая крышка с гравировкой TOP GUN.</p>
+          <div class="eyebrow"><b>IV</b> <span data-i="c4.eb">Mouvement</span></div>
+          <h2><span class="ln"><span data-i="c4.l1">Le cœur</span></span><span class="ln"><span data-i="c4.l2"><em>en coupe</em></span></span></h2>
+          <p data-i="c4.p">Le calibre chronographe IWC se monte couche après couche — ponts, roues, rubis. Un fond en titane gravé TOP GUN vient le refermer.</p>
         </div>
 
         <div class="cap" data-seg="0.56,0.59,0.77,0.79" data-num="V">
-          <div class="eyebrow"><b>V</b> Ремешок</div>
-          <h2><span class="ln"><span>Нить</span></span><span class="ln"><span>за <em>нитью</em></span></span></h2>
-          <p>Текстильный ремешок сплетается из сотен нитей — лёгкий и мягкий, как лётная стропа.</p>
+          <div class="eyebrow"><b>V</b> <span data-i="c5.eb">Bracelet</span></div>
+          <h2><span class="ln"><span data-i="c5.l1">Fil</span></span><span class="ln"><span data-i="c5.l2">après <em>fil</em></span></span></h2>
+          <p data-i="c5.p">Le bracelet textile se tisse à partir de centaines de fils — léger et souple comme une sangle de pilote.</p>
         </div>
 
         <div class="cap" data-seg="0.80,0.82,0.87,0.89" data-num="VI">
-          <div class="eyebrow"><b>VI</b> Циферблат</div>
-          <h2><span class="ln"><span>Видно</span></span><span class="ln"><span><em>с первого взгляда</em></span></span></h2>
-          <p>Крупные цифры и стрелки со светящейся массой — классика пилотских часов IWC.</p>
+          <div class="eyebrow"><b>VI</b> <span data-i="c6.eb">Cadran</span></div>
+          <h2><span class="ln"><span data-i="c6.l1">Lisible</span></span><span class="ln"><span data-i="c6.l2"><em>au premier regard</em></span></span></h2>
+          <p data-i="c6.p">De grands chiffres et des aiguilles luminescentes — la signature des montres d'aviateur IWC.</p>
         </div>
 
         <div class="cap" data-seg="0.90,0.93,1.5,2" data-num="VII">
-          <div class="eyebrow"><b>VII</b> В сборе</div>
-          <h2><span class="ln"><span>Woodland</span></span><span class="ln"><span><em>готов к вылету</em></span></span></h2>
-          <p>Pilot's Watch Chronograph TOP GUN Edition «Woodland». Керамика, титан, механика.</p>
-          <a class="btn ghost go" href="#specs">Характеристики <span class="arw">↓</span></a>
+          <div class="eyebrow"><b>VII</b> <span data-i="c7.eb">Assemblée</span></div>
+          <h2><span class="ln"><span>Woodland</span></span><span class="ln"><span data-i="c7.l2"><em>paré au décollage</em></span></span></h2>
+          <p data-i="c7.p">Pilot's Watch Chronograph TOP GUN Edition « Woodland ». Céramique, titane, mécanique.</p>
+          <a class="btn ghost go" href="#specs"><span data-i="nav.specs">Caractéristiques</span> <span class="arw">↓</span></a>
         </div>
       </div>
 
@@ -254,7 +270,7 @@
           <line class="hand" id="chHand" x1="29" y1="29" x2="29" y2="8" stroke="#e9e4d2" stroke-width="1.2" stroke-linecap="round"/>
           <circle cx="29" cy="29" r="2" fill="#e9e4d2"/>
         </svg>
-        <div><span class="cn" id="chNum">I</span> / VII<br><span class="hint" id="hint">Листайте</span></div>
+        <div><span class="cn" id="chNum">I</span> / VII<br><span class="hint" id="hint" data-i="hint">Défilez</span></div>
       </div>
 
       <div class="grain"></div>
@@ -266,21 +282,21 @@
     <div class="wrap">
       <div class="head reveal">
         <div>
-          <div class="eyebrow"><b>—</b> Характеристики</div>
-          <h2>Коротко<br><em>о главном</em></h2>
+          <div class="eyebrow"><b>—</b> <span data-i="nav.specs">Caractéristiques</span></div>
+          <h2 data-i="specs.h">L'essentiel<br><em>en bref</em></h2>
         </div>
-        <p>Pilot's Watch Chronograph TOP GUN Edition «Woodland» — пилотский хронограф IWC Schaffhausen в цветной керамике.</p>
+        <p data-i="specs.p">Pilot's Watch Chronograph TOP GUN Edition « Woodland » — le chronographe d'aviateur d'IWC Schaffhausen en céramique colorée.</p>
       </div>
 
       <div class="specs reveal">
-        <div class="spec"><span class="k">Корпус</span><div class="v">Керамика</div><span class="d">Цвет Woodland, разработанный совместно с Pantone.</span></div>
-        <div class="spec"><span class="k">Задняя крышка</span><div class="v">Титан</div><span class="d">С гравировкой TOP GUN.</span></div>
-        <div class="spec"><span class="k">Калибр IWC</span><div class="v">69380</div><span class="d">Механический хронограф с автоподзаводом, день недели и дата.</span></div>
-        <div class="spec"><span class="k">Запас хода</span><div class="v">46<small>часов</small></div><span class="d">Почти двое суток от полного завода.</span></div>
-        <div class="spec"><span class="k">Частота</span><div class="v">4<small>Гц</small></div><span class="d">28 800 полуколебаний в час.</span></div>
-        <div class="spec"><span class="k">Водозащита</span><div class="v">6<small>бар</small></div><span class="d">Дождь и брызги — не проблема.</span></div>
+        <div class="spec"><span class="k" data-i="s1.k">Boîtier</span><div class="v" data-i="s1.v">Céramique</div><span class="d" data-i="s1.d">Couleur Woodland, développée avec Pantone.</span></div>
+        <div class="spec"><span class="k" data-i="s2.k">Fond</span><div class="v" data-i="s2.v">Titane</div><span class="d" data-i="s2.d">Gravé TOP GUN.</span></div>
+        <div class="spec"><span class="k" data-i="s3.k">Calibre IWC</span><div class="v">69380</div><span class="d" data-i="s3.d">Chronographe mécanique à remontage automatique, jour et date.</span></div>
+        <div class="spec"><span class="k" data-i="s4.k">Réserve de marche</span><div class="v">46<small data-i="s4.u">heures</small></div><span class="d" data-i="s4.d">Près de deux jours, une fois entièrement remontée.</span></div>
+        <div class="spec"><span class="k" data-i="s5.k">Fréquence</span><div class="v">4<small data-i="s5.u">Hz</small></div><span class="d" data-i="s5.d">28 800 alternances par heure.</span></div>
+        <div class="spec"><span class="k" data-i="s6.k">Étanchéité</span><div class="v">6<small data-i="s6.u">bar</small></div><span class="d" data-i="s6.d">Pluie et éclaboussures ? Aucun souci.</span></div>
       </div>
-      <p class="note reveal">Данные по открытым источникам. Точные характеристики, цена и наличие — на официальном сайте IWC.</p>
+      <p class="note reveal" data-i="note">Données issues de sources publiques. Caractéristiques exactes, prix et disponibilité sur le site officiel d'IWC.</p>
     </div>
   </section>
 
@@ -288,21 +304,21 @@
   <section class="block" id="finale" style="padding-top:0">
     <div class="wrap finale">
       <div class="reveal">
-        <div class="eyebrow"><b>—</b> Где посмотреть</div>
-        <div class="quote">Время<br>в цвете<br><em>леса</em></div>
-        <p>Цену, наличие и ближайший бутик подскажет официальный сайт IWC Schaffhausen.</p>
+        <div class="eyebrow"><b>—</b> <span data-i="fin.eb">Où la découvrir</span></div>
+        <div class="quote" data-i="fin.q">Le temps<br>couleur<br><em>forêt</em></div>
+        <p data-i="fin.p">Prix, disponibilité et boutique la plus proche : rendez-vous sur le site officiel d'IWC Schaffhausen.</p>
         <div class="row">
-          <a href="https://www.iwc.com/" class="btn" target="_blank" rel="noopener">Смотреть на iwc.com <span class="arw">↗</span></a>
-          <a href="#top" class="btn ghost" id="replay">Собрать ещё раз <span class="arw">↺</span></a>
+          <a href="https://www.iwc.com/" class="btn" target="_blank" rel="noopener"><span data-i="fin.b1">Voir sur iwc.com</span> <span class="arw">↗</span></a>
+          <a href="#top" class="btn ghost" id="replay"><span data-i="fin.b2">Réassembler</span> <span class="arw">↺</span></a>
         </div>
       </div>
-      <div class="shot reveal"><img src="frames/f_0431.jpg" alt="Готовый хронограф IWC Woodland в зелёной керамике на текстильном ремешке" loading="lazy" width="640" height="800"></div>
+      <div class="shot reveal"><img src="frames/f_0431.jpg" data-i-alt="fin.alt" alt="Le chronographe IWC Woodland achevé, en céramique verte, sur bracelet textile" loading="lazy" width="640" height="800"></div>
     </div>
   </section>
 
   <footer>
-    <span>IWC Woodland · концепт</span>
-    <div class="disc">Концепт-редизайн для портфолио, не официальный сайт IWC Schaffhausen. Видео, изображения часов и товарные знаки принадлежат IWC Schaffhausen.</div>
+    <span data-i="foot.l">IWC Woodland · concept</span>
+    <div class="disc" data-i="foot.d">Concept de refonte réalisé pour un portfolio — ce n'est pas le site officiel d'IWC Schaffhausen. La vidéo, les images de la montre et les marques appartiennent à IWC Schaffhausen.</div>
   </footer>
 
 <script>
@@ -317,6 +333,136 @@
   const STOPS = [0, 0.11, 0.29, 0.47, 0.74, 0.845, 1];
   const pad = n => String(n).padStart(4,'0');
   const src = i => `frames/f_${pad(i)}.jpg`;
+
+  // --- языки: французский в разметке (основной), немецкий и русский — словарями ---
+  const I18N = {
+    de: {
+      'title': 'IWC Woodland — Konzept',
+      'nav.home': 'IWC Woodland — nach oben',
+      'tag': 'Konzept',
+      'nav.story': 'Die Geschichte',
+      'nav.specs': 'Technische Daten',
+      'sr': 'Animation: Der Chronograph IWC Woodland setzt sich beim Scrollen zusammen – aus Pigment entsteht das Keramikgehäuse, das Werk wird Schicht für Schicht montiert, das Textilarmband gewebt, und am Ende erscheint die fertige Uhr.',
+      'frame': 'Bild',
+      'c1.p': 'Ein Waldgrün, entwickelt gemeinsam mit Pantone. Scrollen Sie – und die Uhr setzt sich vor Ihren Augen zusammen.',
+      'c2.eb': 'Pigment',
+      'c2.l1': 'Zuerst –',
+      'c2.l2': '<em>eine Handvoll Staub</em>',
+      'c2.p': 'Keramik beginnt als Pulver: Zirkoniumoxid und Pigment in der Farbe Woodland.',
+      'c3.eb': 'Gehäuse',
+      'c3.l1': 'Form',
+      'c3.l2': '<em>aus der Wolke</em>',
+      'c3.p': 'Aus dem Pigmentstaub tritt das Gehäuse hervor. Die Farbe ist keine Beschichtung, sondern das Material selbst – Keramik bleicht nicht aus und ist nahezu kratzfest.',
+      'c4.eb': 'Uhrwerk',
+      'c4.l1': 'Das Herz',
+      'c4.l2': '<em>im Querschnitt</em>',
+      'c4.p': 'Das IWC-Chronographenkaliber entsteht Schicht für Schicht – Brücken, Räder, Rubine. Ein Titanboden mit TOP-GUN-Gravur verschließt es.',
+      'c5.eb': 'Armband',
+      'c5.l1': 'Faden',
+      'c5.l2': 'für <em>Faden</em>',
+      'c5.p': 'Das Textilarmband wird aus Hunderten Fäden gewebt – leicht und weich wie ein Fliegergurt.',
+      'c6.eb': 'Zifferblatt',
+      'c6.l1': 'Ablesbar',
+      'c6.l2': '<em>auf einen Blick</em>',
+      'c6.p': 'Große Ziffern und leuchtende Zeiger – das Markenzeichen der IWC-Fliegeruhren.',
+      'c7.eb': 'Vollendet',
+      'c7.l2': '<em>startklar</em>',
+      'c7.p': 'Pilot\'s Watch Chronograph TOP GUN Edition „Woodland“. Keramik, Titan, Mechanik.',
+      'hint': 'Scrollen',
+      'specs.h': 'Das Wichtigste<br><em>in Kürze</em>',
+      'specs.p': 'Pilot\'s Watch Chronograph TOP GUN Edition „Woodland“ – der Fliegerchronograph von IWC Schaffhausen aus farbiger Keramik.',
+      's1.k': 'Gehäuse', 's1.v': 'Keramik', 's1.d': 'Farbe Woodland, gemeinsam mit Pantone entwickelt.',
+      's2.k': 'Gehäuseboden', 's2.v': 'Titan', 's2.d': 'Mit TOP-GUN-Gravur.',
+      's3.k': 'IWC-Kaliber', 's3.d': 'Mechanischer Chronograph mit Automatikaufzug, Wochentag und Datum.',
+      's4.k': 'Gangreserve', 's4.u': 'Stunden', 's4.d': 'Fast zwei Tage bei Vollaufzug.',
+      's5.k': 'Frequenz', 's5.u': 'Hz', 's5.d': '28.800 Halbschwingungen pro Stunde.',
+      's6.k': 'Wasserdicht', 's6.u': 'bar', 's6.d': 'Regen und Spritzwasser? Kein Problem.',
+      'note': 'Angaben aus öffentlichen Quellen. Genaue Daten, Preis und Verfügbarkeit auf der offiziellen IWC-Website.',
+      'fin.eb': 'Wo entdecken',
+      'fin.q': 'Zeit<br>in der Farbe<br><em>des Waldes</em>',
+      'fin.p': 'Preis, Verfügbarkeit und die nächste Boutique finden Sie auf der offiziellen Website von IWC Schaffhausen.',
+      'fin.b1': 'Auf iwc.com ansehen',
+      'fin.b2': 'Neu zusammensetzen',
+      'fin.alt': 'Der fertige IWC Woodland Chronograph aus grüner Keramik am Textilarmband',
+      'foot.l': 'IWC Woodland · Konzept',
+      'foot.d': 'Konzept-Redesign für ein Portfolio – keine offizielle Website von IWC Schaffhausen. Video, Uhrenbilder und Marken gehören IWC Schaffhausen.'
+    },
+    ru: {
+      'title': 'IWC Woodland — концепт',
+      'nav.home': 'IWC Woodland — в начало',
+      'tag': 'Концепт',
+      'nav.story': 'История',
+      'nav.specs': 'Характеристики',
+      'sr': 'Анимация: хронограф IWC Woodland собирается при прокрутке — из пигмента формируется керамический корпус, механизм собирается слой за слоем, сплетается текстильный ремешок, и в финале появляются готовые часы.',
+      'frame': 'Кадр',
+      'c1.p': 'Оттенок лесной хвои, созданный вместе с Pantone. Листайте — и часы соберутся на ваших глазах.',
+      'c2.eb': 'Пигмент',
+      'c2.l1': 'Сначала —',
+      'c2.l2': '<em>горсть пыли</em>',
+      'c2.p': 'Керамика начинается с порошка: оксид циркония и пигмент цвета Woodland.',
+      'c3.eb': 'Корпус',
+      'c3.l1': 'Форма',
+      'c3.l2': '<em>из облака</em>',
+      'c3.p': 'Из пигментной пыли проступает корпус. Цвет здесь не покрытие, а сам материал — керамика не выгорает и почти не царапается.',
+      'c4.eb': 'Механизм',
+      'c4.l1': 'Сердце',
+      'c4.l2': '<em>в разрезе</em>',
+      'c4.p': 'Хронографический калибр IWC собирается слой за слоем — мосты, колёса, рубины. Сверху его закрывает титановая крышка с гравировкой TOP GUN.',
+      'c5.eb': 'Ремешок',
+      'c5.l1': 'Нить',
+      'c5.l2': 'за <em>нитью</em>',
+      'c5.p': 'Текстильный ремешок сплетается из сотен нитей — лёгкий и мягкий, как лётная стропа.',
+      'c6.eb': 'Циферблат',
+      'c6.l1': 'Видно',
+      'c6.l2': '<em>с первого взгляда</em>',
+      'c6.p': 'Крупные цифры и стрелки со светящейся массой — классика пилотских часов IWC.',
+      'c7.eb': 'В сборе',
+      'c7.l2': '<em>готов к вылету</em>',
+      'c7.p': 'Pilot\'s Watch Chronograph TOP GUN Edition «Woodland». Керамика, титан, механика.',
+      'hint': 'Листайте',
+      'specs.h': 'Коротко<br><em>о главном</em>',
+      'specs.p': 'Pilot\'s Watch Chronograph TOP GUN Edition «Woodland» — пилотский хронограф IWC Schaffhausen в цветной керамике.',
+      's1.k': 'Корпус', 's1.v': 'Керамика', 's1.d': 'Цвет Woodland, разработанный совместно с Pantone.',
+      's2.k': 'Задняя крышка', 's2.v': 'Титан', 's2.d': 'С гравировкой TOP GUN.',
+      's3.k': 'Калибр IWC', 's3.d': 'Механический хронограф с автоподзаводом, день недели и дата.',
+      's4.k': 'Запас хода', 's4.u': 'часов', 's4.d': 'Почти двое суток от полного завода.',
+      's5.k': 'Частота', 's5.u': 'Гц', 's5.d': '28 800 полуколебаний в час.',
+      's6.k': 'Водозащита', 's6.u': 'бар', 's6.d': 'Дождь и брызги — не проблема.',
+      'note': 'Данные по открытым источникам. Точные характеристики, цена и наличие — на официальном сайте IWC.',
+      'fin.eb': 'Где посмотреть',
+      'fin.q': 'Время<br>в цвете<br><em>леса</em>',
+      'fin.p': 'Цену, наличие и ближайший бутик подскажет официальный сайт IWC Schaffhausen.',
+      'fin.b1': 'Смотреть на iwc.com',
+      'fin.b2': 'Собрать ещё раз',
+      'fin.alt': 'Готовый хронограф IWC Woodland в зелёной керамике на текстильном ремешке',
+      'foot.l': 'IWC Woodland · концепт',
+      'foot.d': 'Концепт-редизайн для портфолио, не официальный сайт IWC Schaffhausen. Видео, изображения часов и товарные знаки принадлежат IWC Schaffhausen.'
+    }
+  };
+  // французский снимаем прямо с разметки, чтобы не дублировать тексты
+  I18N.fr = { title: document.title };
+  document.querySelectorAll('[data-i]').forEach(el => { I18N.fr[el.dataset.i] = el.innerHTML; });
+  document.querySelectorAll('[data-i-aria]').forEach(el => { I18N.fr[el.dataset.iAria] = el.getAttribute('aria-label'); });
+  document.querySelectorAll('[data-i-alt]').forEach(el => { I18N.fr[el.dataset.iAlt] = el.getAttribute('alt'); });
+
+  function setLang(lang){
+    if(!I18N[lang]) lang = 'fr';
+    const d = I18N[lang];
+    document.documentElement.lang = lang;
+    document.title = d.title;
+    document.querySelectorAll('[data-i]').forEach(el => { if(d[el.dataset.i] != null) el.innerHTML = d[el.dataset.i]; });
+    document.querySelectorAll('[data-i-aria]').forEach(el => el.setAttribute('aria-label', d[el.dataset.iAria]));
+    document.querySelectorAll('[data-i-alt]').forEach(el => el.setAttribute('alt', d[el.dataset.iAlt]));
+    document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+    try{ localStorage.setItem('lang', lang); }catch(e){}
+    const u = new URL(location.href);
+    if(lang === 'fr') u.searchParams.delete('lang'); else u.searchParams.set('lang', lang);
+    history.replaceState(null, '', u);
+  }
+  let startLang = new URLSearchParams(location.search).get('lang');
+  if(!startLang){ try{ startLang = localStorage.getItem('lang'); }catch(e){} }
+  setLang(startLang || 'fr');
+  document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
 
   const $ = id => document.getElementById(id);
   const canvas = $('scene'), ctx = canvas.getContext('2d');

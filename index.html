@@ -213,25 +213,25 @@
           <p>Керамика начинается с порошка: оксид циркония и пигмент цвета Woodland.</p>
         </div>
 
-        <div class="cap" data-seg="0.15,0.18,0.30,0.33" data-num="III">
+        <div class="cap" data-seg="0.15,0.18,0.32,0.34" data-num="III">
           <div class="eyebrow"><b>III</b> Корпус</div>
           <h2><span class="ln"><span>Форма</span></span><span class="ln"><span><em>из облака</em></span></span></h2>
           <p>Из пигментной пыли проступает корпус. Цвет здесь не покрытие, а сам материал — керамика не выгорает и почти не царапается.</p>
         </div>
 
-        <div class="cap" data-seg="0.34,0.37,0.52,0.55" data-num="IV">
+        <div class="cap" data-seg="0.35,0.38,0.52,0.55" data-num="IV">
           <div class="eyebrow"><b>IV</b> Механизм</div>
           <h2><span class="ln"><span>Сердце</span></span><span class="ln"><span><em>в разрезе</em></span></span></h2>
           <p>Хронографический калибр IWC собирается слой за слоем — мосты, колёса, рубины. Сверху его закрывает титановая крышка с гравировкой TOP GUN.</p>
         </div>
 
-        <div class="cap" data-seg="0.56,0.59,0.75,0.78" data-num="V">
+        <div class="cap" data-seg="0.56,0.59,0.77,0.79" data-num="V">
           <div class="eyebrow"><b>V</b> Ремешок</div>
           <h2><span class="ln"><span>Нить</span></span><span class="ln"><span>за <em>нитью</em></span></span></h2>
           <p>Текстильный ремешок сплетается из сотен нитей — лёгкий и мягкий, как лётная стропа.</p>
         </div>
 
-        <div class="cap" data-seg="0.79,0.81,0.87,0.89" data-num="VI">
+        <div class="cap" data-seg="0.80,0.82,0.87,0.89" data-num="VI">
           <div class="eyebrow"><b>VI</b> Циферблат</div>
           <h2><span class="ln"><span>Видно</span></span><span class="ln"><span><em>с первого взгляда</em></span></span></h2>
           <p>Крупные цифры и стрелки со светящейся массой — классика пилотских часов IWC.</p>
@@ -309,8 +309,12 @@
 (function(){
   const N = 431;                       // кадров (12 к/с, шаг 1/12 с)
   const FPS_SRC = 12;
-  const MAX_SPEED = 1/6;               // сцена целиком — не быстрее чем за 6 с
-  const SCREENS = 4;                   // длина сцены — 4 экрана прокрутки
+  const VIDEO_SEC = 36;                // длительность сцены в секундах ролика
+  const PLAY_RATE = 3;                 // переход между главами идёт в 3× от реальной скорости ролика
+  const MAX_SPEED = 1/6;               // запасной режим (перетаскивание ползунка): не быстрее 6 с на сцену
+  const SCREENS = 6;                   // длина сцены — по экрану на переход
+  // Точки остановки: на каждой глава полностью видна, между ними видео проигрывается само.
+  const STOPS = [0, 0.11, 0.29, 0.47, 0.74, 0.845, 1];
   const pad = n => String(n).padStart(4,'0');
   const src = i => `frames/f_${pad(i)}.jpg`;
 
@@ -434,13 +438,108 @@
 
   // --- скролл ---
   let target = 0, current = 0, vel = 0, lastT = 0, inView = true;
+  const stageTop = () => stage.offsetTop;
+  const stageLen = () => stage.offsetHeight - window.innerHeight;
+  let ownY = -1;                       // последняя позиция, которую выставили мы сами
   function readScroll(){
     const r = stage.getBoundingClientRect();
-    const total = stage.offsetHeight - window.innerHeight;
+    const total = stageLen();
     target = Math.max(0, Math.min(1, total>0 ? -r.top/total : 0));
     inView = r.bottom > 0 && r.top < window.innerHeight;
-    hint.style.opacity = target>0.01 ? 0 : 1;
+    hint.style.opacity = (anim ? anim.to : target) > 0.01 ? 0 : 1;
     nav.classList.toggle('solid', r.bottom < 80);
+  }
+  function onScroll(){
+    const own = Math.abs(window.scrollY - ownY) < 2;
+    readScroll();
+    // чужой скролл (ползунок, якорь, восстановление позиции) — переходы по точкам сбрасываем
+    if(!own){ anim = null; stop = nearestStop(target); }
+  }
+
+  // --- переходы по точкам ---
+  // Один жест = одна глава. Пока идёт переход, ввод не накапливается,
+  // поэтому сильный скролл не проматывает сцену и не выкидывает к блокам ниже.
+  let stop = 0, anim = null, animEnd = 0;
+  const nearestStop = p => {
+    let k = 0;
+    STOPS.forEach((s,i)=>{ if(Math.abs(s-p) < Math.abs(STOPS[k]-p)) k = i; });
+    return k;
+  };
+  const easeInOut = t => t<.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
+  function go(k){
+    k = Math.max(0, Math.min(STOPS.length-1, k));
+    if(k === stop && !anim) return;
+    const from = current, to = STOPS[k];
+    const dur = reduce ? 0 : Math.max(0.9, Math.min(2.4, Math.abs(to-from)*VIDEO_SEC/PLAY_RATE));
+    stop = k;
+    anim = { from, to, t0: performance.now(), dur: dur*1000 };
+  }
+  // в зоне сцены: окно прокрутки находится внутри её «липкого» участка
+  function inZone(){
+    const y = window.scrollY, top = stageTop();
+    return y >= top - 2 && y <= top + stageLen() + 2;
+  }
+  function pinTo(p){
+    const y = Math.round(stageTop() + p*stageLen());
+    ownY = y;
+    window.scrollTo(0, y);
+  }
+
+  // Колесо и трекпад. Хвост инерции трекпада (дельты затухают) за новый жест не считаем.
+  let lastWheelT = 0, lastAbs = 0, accum = 0;
+  function onWheel(e){
+    if(e.ctrlKey) return;                          // пинч-зум
+    const now = performance.now();
+    const dy = e.deltaMode === 1 ? e.deltaY*32 : e.deltaY;
+    const abs = Math.abs(dy);
+    const gap = now - lastWheelT;
+    const tail = gap < 140 && abs <= lastAbs*1.15;  // продолжение того же жеста или инерция
+    lastWheelT = now; lastAbs = abs;
+    if(!dy) return;
+
+    const top = stageTop(), end = top + stageLen(), y = window.scrollY;
+    // заход в сцену снизу: ловим на последней главе
+    if(!inZone()){
+      if(dy < 0 && y > end && y + dy < end + 2){
+        e.preventDefault(); stop = STOPS.length-1; current = target = 1; pinTo(1); anim = null; animEnd = now;
+      }
+      return;
+    }
+    const dir = dy > 0 ? 1 : -1;
+    const busy = anim || (tail && now - animEnd < 900);
+    const atEdge = (dir > 0 && stop === STOPS.length-1) || (dir < 0 && stop === 0);
+    if(atEdge && !busy){ accum = 0; return; }      // на краю сцены — обычная прокрутка страницы
+    e.preventDefault();
+    if(busy){ accum = 0; return; }
+    if(gap > 140) accum = 0;
+    accum += dy;
+    if(Math.abs(accum) >= 24){ accum = 0; go(stop + dir); }
+  }
+
+  // Тач: один свайп = одна глава
+  let touchY = null, touchUsed = false;
+  function onTouchStart(e){ touchY = e.touches[0].clientY; touchUsed = false; }
+  function onTouchMove(e){
+    if(touchY === null || !inZone()) return;
+    const dy = touchY - e.touches[0].clientY;
+    const dir = dy > 0 ? 1 : -1;
+    const atEdge = (dir > 0 && stop === STOPS.length-1) || (dir < 0 && stop === 0);
+    if(atEdge && !anim) return;
+    e.preventDefault();
+    if(!touchUsed && !anim && Math.abs(dy) > 28){ touchUsed = true; go(stop + dir); }
+  }
+  function onTouchEnd(){ touchY = null; }
+
+  // Клавиатура
+  function onKey(e){
+    if(!inZone() || e.target.closest && e.target.closest('input,textarea')) return;
+    const down = ['ArrowDown','PageDown',' '].includes(e.key) && !e.shiftKey;
+    const up = ['ArrowUp','PageUp'].includes(e.key) || (e.key===' ' && e.shiftKey);
+    if(!down && !up) return;
+    const dir = down ? 1 : -1;
+    if((dir > 0 && stop === STOPS.length-1 && !anim) || (dir < 0 && stop === 0 && !anim)) return;
+    e.preventDefault();
+    if(!anim) go(stop + dir);
   }
 
   // --- подписи: вход и уход не пересекаются, между главами есть пауза ---
@@ -518,12 +617,18 @@
     if(!reduce) showcase.style.transform = `scale(${(1 + p*0.04).toFixed(4)})`;
   }
 
-  // Критически демпфированное догоняние с потолком скорости: ровный темп при любом скролле.
-  // Если сцена ушла с экрана — сразу встаём на место, чтобы не «доигрывать» за кадром.
+  // Переход между точками — по таймлайну с плавным разгоном и торможением,
+  // окно прокрутки едет вместе с ним. Без перехода (ползунок, якоря) — мягкое догоняние.
   function tick(now){
     const dt = lastT ? Math.min(0.1, (now - lastT)/1000) : 1/60;
     lastT = now;
-    if(reduce || !inView){ current = target; vel = 0; }
+    if(anim){
+      const t = anim.dur ? Math.min(1, (now - anim.t0)/anim.dur) : 1;
+      current = anim.from + (anim.to - anim.from)*easeInOut(t);
+      pinTo(current);
+      if(t >= 1){ current = target = anim.to; anim = null; animEnd = now; vel = 0; }
+    }
+    else if(reduce || !inView){ current = target; vel = 0; }
     else {
       const diff = target - current;
       const want = Math.max(-MAX_SPEED, Math.min(MAX_SPEED, diff*4));
@@ -547,12 +652,19 @@
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
   $('replay').addEventListener('click', e=>{ e.preventDefault(); window.scrollTo({ top:0, behavior:'smooth' }); });
-  window.addEventListener('scroll', readScroll, {passive:true});
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('wheel', onWheel, {passive:false});
+  window.addEventListener('touchstart', onTouchStart, {passive:true});
+  window.addEventListener('touchmove', onTouchMove, {passive:false});
+  window.addEventListener('touchend', onTouchEnd, {passive:true});
+  window.addEventListener('keydown', onKey);
+  if('scrollRestoration' in history) history.scrollRestoration = 'manual';
   window.addEventListener('resize', resize);
   window.addEventListener('orientationchange', ()=>setTimeout(resize,200));
 
   resize();
   current = target;
+  stop = nearestStop(target);
   loadAll();
   requestAnimationFrame(tick);
 })();

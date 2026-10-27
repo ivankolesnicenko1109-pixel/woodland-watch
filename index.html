@@ -310,7 +310,7 @@
   const N = 431;                       // кадров (12 к/с, шаг 1/12 с)
   const FPS_SRC = 12;
   const VIDEO_SEC = 36;                // длительность сцены в секундах ролика
-  const PLAY_RATE = 3;                 // переход между главами идёт в 3× от реальной скорости ролика
+  const PLAY_RATE = 1.8;               // переход между главами идёт в 1.8× от реальной скорости ролика
   const MAX_SPEED = 1/6;               // запасной режим (перетаскивание ползунка): не быстрее 6 с на сцену
   const SCREENS = 6;                   // длина сцены — по экрану на переход
   // Точки остановки: на каждой глава полностью видна, между ними видео проигрывается само.
@@ -470,7 +470,7 @@
     k = Math.max(0, Math.min(STOPS.length-1, k));
     if(k === stop && !anim) return;
     const from = current, to = STOPS[k];
-    const dur = reduce ? 0 : Math.max(0.9, Math.min(2.4, Math.abs(to-from)*VIDEO_SEC/PLAY_RATE));
+    const dur = reduce ? 0 : Math.max(1.8, Math.min(4, Math.abs(to-from)*VIDEO_SEC/PLAY_RATE));
     stop = k;
     anim = { from, to, t0: performance.now(), dur: dur*1000 };
   }
